@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://shopsphere-kqre.onrender.com",
+  baseURL: "https://shopsphere-vlon.onrender.com/api",
 });
 
 // Automatically attach JWT token
