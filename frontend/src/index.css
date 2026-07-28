@@ -1,0 +1,623 @@
+/* ================================================= */
+/* GLOBAL CSS */
+/* ================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:#f5f7fb;
+    color:#212529;
+    overflow-x:hidden;
+}
+
+#root{
+    width:100%;
+    min-height:100vh;
+}
+
+img{
+    max-width:100%;
+    display:block;
+}
+
+a{
+    text-decoration:none;
+}
+
+.container-fluid{
+    padding-left:25px;
+    padding-right:25px;
+}
+
+section{
+    padding:70px 0;
+}
+
+/* ================================================= */
+/* NAVBAR */
+/* ================================================= */
+
+.navbar{
+    padding:14px 0;
+    transition:.3s;
+}
+
+.navbar-brand{
+    font-size:1.8rem;
+    font-weight:700;
+}
+
+.navbar .nav-link{
+    color:#fff !important;
+    margin:0 8px;
+    font-weight:500;
+    transition:.3s;
+}
+
+.navbar .nav-link:hover{
+    color:#ffc107 !important;
+}
+
+.navbar .btn{
+    border-radius:10px;
+}
+
+.badge{
+    font-size:.72rem;
+}
+
+/* ================================================= */
+/* DROPDOWN */
+/* ================================================= */
+
+#user-dropdown{
+    color:#fff;
+    text-decoration:none;
+}
+
+.dropdown-toggle::after{
+    margin-left:8px;
+}
+
+.dropdown-menu{
+    border:none;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+}
+
+.dropdown-item{
+    padding:12px 18px;
+    transition:.3s;
+}
+
+.dropdown-item:hover{
+    background:#0d6efd;
+    color:#fff;
+}
+
+/* ================================================= */
+/* HERO SECTION */
+/* ================================================= */
+
+.hero-image{
+    height:500px;
+    object-fit:cover;
+}
+
+.carousel-caption{
+    background:rgba(0,0,0,.45);
+    padding:25px;
+    border-radius:20px;
+    max-width:600px;
+}
+
+.carousel-caption h1{
+    font-weight:700;
+}
+
+.carousel-caption p{
+    font-size:1.1rem;
+}
+
+.carousel-caption .btn{
+    margin-top:10px;
+    border-radius:10px;
+    padding:12px 28px;
+}
+
+/* ================================================= */
+/* PRODUCT CARDS */
+/* ================================================= */
+
+.card{
+    border:none;
+    border-radius:18px;
+    overflow:hidden;
+    transition:all .35s ease;
+    background:#fff;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+}
+
+.card-img-top{
+    transition:.4s;
+}
+
+.card:hover .card-img-top{
+    transform:scale(1.05);
+}
+
+.card-title{
+    font-weight:600;
+}
+
+.card-text{
+    color:#6c757d;
+}
+
+.btn{
+    border-radius:10px;
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+/* ================================================= */
+/* CATEGORY CARDS */
+/* ================================================= */
+
+.category-card{
+    background:#fff;
+    border-radius:20px;
+    transition:.3s;
+    cursor:pointer;
+}
+
+.category-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+}
+
+.category-card h4{
+    font-size:55px;
+}
+
+.category-card h5{
+    margin-top:15px;
+    font-weight:600;
+}
+
+/* ================================================= */
+/* NEWSLETTER */
+/* ================================================= */
+
+.input-group .form-control{
+    height:55px;
+    border-radius:10px 0 0 10px;
+}
+
+.input-group .btn{
+    border-radius:0 10px 10px 0;
+    padding:0 30px;
+}
+
+/* ================================================= */
+/* FOOTER */
+/* ================================================= */
+
+footer{
+    background:#111827;
+    color:#fff;
+}
+
+footer h5{
+    font-weight:700;
+    margin-bottom:18px;
+}
+
+footer p{
+    color:#d6d6d6;
+    line-height:1.8;
+}
+
+footer a{
+    color:#d6d6d6;
+    transition:.3s;
+}
+
+footer a:hover{
+    color:#ffc107;
+}
+
+footer hr{
+    border-color:rgba(255,255,255,.15);
+}
+
+/* ================================================= */
+/* PRODUCT IMAGE ZOOM */
+/* ================================================= */
+
+.zoom-image{
+    transition:transform .4s;
+    cursor:zoom-in;
+}
+
+.zoom-image:hover{
+    transform:scale(1.25);
+}
+
+/* ================================================= */
+/* ADMIN DASHBOARD */
+/* ================================================= */
+
+.admin-wrapper{
+    min-height:100vh;
+    background:#f5f7fb;
+}
+
+.admin-sidebar{
+    background:#212529;
+    min-height:100vh;
+    padding-top:20px;
+}
+
+.admin-sidebar .list-group{
+    border-radius:0;
+}
+
+.admin-sidebar .list-group-item{
+    background:transparent;
+    color:#fff;
+    border:none !important;
+    padding:15px 20px;
+    transition:.3s;
+    font-weight:500;
+}
+
+.admin-sidebar .list-group-item:hover{
+    background:#0d6efd;
+    color:#fff;
+}
+
+.admin-sidebar .list-group-item.active{
+    background:#0d6efd !important;
+    color:#fff !important;
+}
+
+.admin-content{
+    padding:30px;
+}
+
+/* ================================================= */
+/* DASHBOARD CARDS */
+/* ================================================= */
+
+.dashboard-card{
+    border-radius:18px;
+    overflow:hidden;
+    transition:.3s;
+}
+
+.dashboard-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+}
+
+.dashboard-card h5{
+    font-weight:600;
+}
+
+.dashboard-card h2{
+    font-weight:700;
+}
+
+/* ================================================= */
+/* TABLE */
+/* ================================================= */
+
+.table{
+    border-radius:15px;
+    overflow:hidden;
+    background:#fff;
+}
+
+.table thead{
+    background:#0d6efd;
+    color:#fff;
+}
+
+.table th,
+.table td{
+    vertical-align:middle;
+    padding:14px;
+}
+
+.table tbody tr{
+    transition:.3s;
+}
+
+.table tbody tr:hover{
+    background:#f8f9fa;
+}
+
+/* ================================================= */
+/* FORMS */
+/* ================================================= */
+
+.form-control,
+.form-select{
+    border-radius:10px;
+    min-height:45px;
+}
+
+textarea.form-control{
+    min-height:120px;
+}
+
+.form-control:focus,
+.form-select:focus{
+    box-shadow:none;
+    border-color:#0d6efd;
+}
+
+/* ================================================= */
+/* BUTTONS */
+/* ================================================= */
+
+.btn-success,
+.btn-primary,
+.btn-warning,
+.btn-danger{
+    border-radius:10px;
+    font-weight:500;
+}
+
+.btn-success:hover,
+.btn-primary:hover,
+.btn-warning:hover,
+.btn-danger:hover{
+    transform:translateY(-2px);
+}
+
+/* ================================================= */
+/* PAGINATION */
+/* ================================================= */
+
+.pagination .page-link{
+    border-radius:8px;
+    margin:0 3px;
+    color:#0d6efd;
+}
+
+.pagination .page-item.active .page-link{
+    background:#0d6efd;
+    border-color:#0d6efd;
+}
+
+/* ================================================= */
+/* RESPONSIVE DESIGN */
+/* ================================================= */
+
+/* ---------- Large Tablet ---------- */
+
+@media (max-width: 992px) {
+
+.container-fluid{
+    padding-left:20px;
+    padding-right:20px;
+}
+
+.hero-image{
+    height:350px;
+}
+
+.carousel-caption{
+    padding:20px;
+    max-width:500px;
+}
+
+.carousel-caption h1{
+    font-size:2.2rem;
+}
+
+.carousel-caption p{
+    font-size:1rem;
+}
+
+.navbar-brand{
+    font-size:1.6rem;
+}
+
+.dashboard-card{
+    margin-bottom:20px;
+}
+
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width:768px){
+
+section{
+    padding:50px 0;
+}
+
+.hero-image{
+    height:250px;
+}
+
+.carousel-caption{
+    bottom:15px;
+    padding:15px;
+    max-width:90%;
+}
+
+.carousel-caption h1{
+    font-size:1.8rem;
+}
+
+.carousel-caption p{
+    font-size:.95rem;
+}
+
+.carousel-caption .btn{
+    font-size:.9rem;
+    padding:8px 18px;
+}
+
+.navbar-brand{
+    font-size:1.5rem;
+}
+
+.card-img-top{
+    height:220px !important;
+}
+
+.category-card{
+    padding:20px !important;
+}
+
+.category-card h4{
+    font-size:45px;
+}
+
+.table{
+    font-size:.9rem;
+}
+
+.admin-content{
+    padding:15px;
+}
+
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width:576px){
+
+.container-fluid{
+    padding-left:15px;
+    padding-right:15px;
+}
+
+.hero-image{
+    height:190px;
+}
+
+.carousel-caption{
+    bottom:10px;
+    padding:10px;
+    border-radius:10px;
+}
+
+.carousel-caption h1{
+    font-size:1.2rem;
+}
+
+.carousel-caption p{
+    display:none;
+}
+
+.carousel-caption .btn{
+    padding:7px 14px;
+    font-size:.8rem;
+}
+
+.navbar-brand{
+    font-size:1.3rem;
+}
+
+.navbar .nav-link{
+    margin:5px 0;
+}
+
+.card{
+    border-radius:12px;
+}
+
+.card-img-top{
+    height:180px !important;
+}
+
+.card-body{
+    padding:15px;
+}
+
+.category-card h4{
+    font-size:38px;
+}
+
+.category-card h5{
+    font-size:1rem;
+}
+
+.btn{
+    font-size:.9rem;
+}
+
+.input-group{
+    flex-direction:column;
+}
+
+.input-group .form-control{
+    width:100%;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.input-group .btn{
+    width:100%;
+    border-radius:10px;
+}
+
+footer{
+    text-align:center;
+}
+
+.table-responsive{
+    overflow-x:auto;
+}
+
+}
+
+/* ---------- Extra Small ---------- */
+
+@media (max-width:400px){
+
+.hero-image{
+    height:160px;
+}
+
+.carousel-caption h1{
+    font-size:1rem;
+}
+
+.navbar-brand{
+    font-size:1.15rem;
+}
+
+.card-img-top{
+    height:160px !important;
+}
+
+.category-card{
+    padding:15px !important;
+}
+
+}
+
