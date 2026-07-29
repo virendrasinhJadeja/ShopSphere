@@ -24,9 +24,7 @@ function Footer() {
             </h3>
 
             <p className="text-light mt-3">
-              ShopSphere is a modern MERN Stack E-Commerce
-              website where customers can shop securely with
-              fast delivery and premium products.
+              ShopSphere is a modern eCommerce solution for fast, secure, and easy shopping.
             </p>
           </div>
 
