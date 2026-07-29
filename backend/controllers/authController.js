@@ -141,6 +141,8 @@ const getUserProfile = async (req, res) => {
 
 const updateUserProfile = async (req, res) => {
   try {
+    const { fullName, phone } = req.body;
+
     const user = await User.findById(req.user._id);
 
     if (!user) {
@@ -150,8 +152,8 @@ const updateUserProfile = async (req, res) => {
       });
     }
 
-    user.fullName = req.body.fullName || user.fullName;
-    user.phone = req.body.phone || user.phone;
+    user.fullName = fullName || user.fullName;
+    user.phone = phone || user.phone;
 
     await user.save();
 
@@ -161,11 +163,11 @@ const updateUserProfile = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Update Profile Error:", error);
 
     res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: error.message,
     });
   }
 };
