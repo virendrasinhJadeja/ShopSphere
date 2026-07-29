@@ -20,11 +20,12 @@ function Register() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  fullName: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirmPassword: "",
+});
 
   const handleChange = (e) => {
     setFormData({
@@ -56,6 +57,10 @@ function Register() {
 
   const strength = getStrength();
 
+  if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+  return toast.error("Please enter a valid 10-digit phone number.");
+}
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -67,10 +72,11 @@ function Register() {
 
     try {
       await api.post("/auth/register", {
-        fullName: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-      });
+  fullName: formData.fullName,
+  email: formData.email,
+  phone: formData.phone,
+  password: formData.password,
+});
 
       toast.success("Registration Successful 🎉");
 
@@ -160,6 +166,8 @@ function Register() {
                   Email
                 </label>
 
+
+
                 <div className="input-group">
                   <span className="input-group-text">
                     <FaEnvelope />
@@ -176,6 +184,32 @@ function Register() {
                   />
                 </div>
               </div>
+
+              <div className="mb-3">
+  <label className="fw-semibold">Phone Number</label>
+
+  <div className="input-group">
+    <span className="input-group-text">
+      +91
+    </span>
+
+    <input
+      type="tel"
+      className="form-control"
+      name="phone"
+      placeholder="9876543210"
+      value={formData.phone}
+      onChange={handleChange}
+      maxLength={10}
+      pattern="[0-9]{10}"
+      required
+    />
+  </div>
+
+  <small className="text-muted">
+    Enter a valid 10-digit mobile number.
+  </small>
+</div>
 
               <div className="mb-3">
                 <label className="fw-semibold">

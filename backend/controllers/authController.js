@@ -159,6 +159,50 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  try {
+    // Admin apna account delete nahi kar sakta
+    if (req.user._id.toString() === req.params.id) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot delete your own account.",
+      });
+    }
+
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    // Kisi bhi admin account ko delete nahi kar sakte
+    if (user.role === "admin") {
+      return res.status(400).json({
+        success: false,
+        message: "Admin account cannot be deleted.",
+      });
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully.",
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
 // ===============================
 // Admin Dashboard
 // ===============================
@@ -184,5 +228,6 @@ module.exports = {
   loginUser,
   getUserProfile,
   getAllUsers,
+  deleteUser,
   adminDashboard,
 };

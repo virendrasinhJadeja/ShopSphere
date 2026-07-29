@@ -5,6 +5,7 @@ import { getProductById } from "../../services/productService";
 import { toast, ToastContainer } from "react-toastify";
 import { addToCart } from "../../services/cartService";
 import { addToWishlist } from "../../services/wishlistService";
+import { useApp } from "../../context/AppContext";
 
 import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
@@ -18,7 +19,7 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useAuth();
-
+  const { refreshCounts } = useApp();
 const [rating, setRating] = useState(5);
 const [comment, setComment] = useState("");
 
@@ -33,21 +34,22 @@ const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = async () => {
   try {
-   await addToCart(product._id, quantity);
+    await addToCart(product._id, quantity);
+    await refreshCounts();
+
     toast.success("Product added to cart!");
   } catch (error) {
-    console.log(error.response);
-console.log(error.response?.data);
-
-toast.error(
-  error.response?.data?.message || "Failed to add product."
-);
+    toast.error(
+      error.response?.data?.message || "Failed to add product."
+    );
   }
 };
 
 const handleAddToWishlist = async () => {
   try {
     await addToWishlist(product._id);
+    await refreshCounts();
+
     toast.success("Product added to wishlist!");
   } catch (error) {
     toast.error(

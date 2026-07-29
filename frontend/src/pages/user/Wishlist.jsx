@@ -5,10 +5,12 @@ import {
   removeFromWishlist,
 } from "../../services/wishlistService";
 import { addToCart } from "../../services/cartService";
+import { useApp } from "../../context/AppContext";
 
 function Wishlist() {
   const [wishlist, setWishlist] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { refreshCounts } = useApp();
 
   useEffect(() => {
     fetchWishlist();
@@ -29,8 +31,11 @@ function Wishlist() {
   const handleRemove = async (productId) => {
     try {
       await removeFromWishlist(productId);
-      toast.success("Removed from wishlist");
-      fetchWishlist();
+
+await fetchWishlist();
+await refreshCounts();
+
+toast.success("Removed from wishlist");
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to remove item"
@@ -41,10 +46,12 @@ function Wishlist() {
   const handleMoveToCart = async (productId) => {
     try {
       await addToCart(productId, 1);
-      await removeFromWishlist(productId);
+await removeFromWishlist(productId);
 
-      toast.success("Moved to Cart");
-      fetchWishlist();
+await fetchWishlist();
+await refreshCounts();
+
+toast.success("Moved to Cart");
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to move item"

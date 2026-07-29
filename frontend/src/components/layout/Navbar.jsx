@@ -6,6 +6,7 @@ import api from "../../services/api";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { useCompare } from "../../context/CompareContext";
 import "../../styles/navbar.css";
+import { useApp } from "../../context/AppContext";
 
 import {
   FaShoppingBag,
@@ -18,8 +19,12 @@ import {
 
 function Navbar() {
   const [keyword, setKeyword] = useState("");
-  const [cartCount, setCartCount] = useState(0);
-const [wishlistCount, setWishlistCount] = useState(0);
+  const {
+  cartCount,
+  wishlistCount,
+  refreshCounts,
+  resetCounts,
+} = useApp();
 
   const { user, logout, isLoggedIn } = useAuth();
   const { compareItems } = useCompare();
@@ -37,28 +42,17 @@ const [wishlistCount, setWishlistCount] = useState(0);
 
 useEffect(() => {
   if (isLoggedIn) {
-    fetchCounts();
+    refreshCounts();
   }
 }, [isLoggedIn]);
 
-const fetchCounts = async () => {
-  try {
-    const cartRes = await api.get("/cart");
-    const wishlistRes = await api.get("/wishlist");
-
-    setCartCount(cartRes.data.items?.length || 0);
-    setWishlistCount(
-      wishlistRes.data.wishlist?.length || 0
-    );
-  } catch (error) {
-    console.log(error);
-  }
-};
 
   const handleLogout = () => {
+     resetCounts();
     logout();
     navigate("/login");
   };
+
 
   return (
     <nav
@@ -135,24 +129,16 @@ const fetchCounts = async () => {
 
 <li className="nav-item">
   <NavLink className="nav-link" to="/wishlist">
-    <FaHeart className="me-1 text-danger" />
-    Wishlist
-
-    <span className="badge bg-danger ms-2">
-      {wishlistCount}
-    </span>
-  </NavLink>
+  <FaHeart className="me-1 text-danger" />
+  Wishlist
+</NavLink>
 </li>
 
                 <li className="nav-item">
                   <NavLink className="nav-link" to="/cart">
-                    <FaShoppingCart className="me-1 text-info" />
-Cart
-
-<span  className="badge rounded-pill bg-warning text-dark ms-1">
-  {cartCount}
-</span>
-                  </NavLink>
+  <FaShoppingCart className="me-1 text-info" />
+  Cart
+</NavLink>
                 </li>
 
                 <li className="nav-item">

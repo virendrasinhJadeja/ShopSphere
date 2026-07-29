@@ -3,12 +3,14 @@ import { getCart, removeFromCart, updateCart } from "../../services/cartService"
 import { toast, ToastContainer } from "react-toastify";
 
 import { useNavigate } from "react-router-dom";
+import { useApp } from "../../context/AppContext";
 
 function Cart() {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  
+  const { refreshCounts } = useApp();
+
   useEffect(() => {
     fetchCart();
   }, []);
@@ -25,14 +27,19 @@ function Cart() {
   };
 
   const handleRemove = async (productId) => {
-    try {
-      await removeFromCart(productId);
-      toast.success("Item removed from cart");
-      fetchCart();
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to remove item");
-    }
-  };
+  try {
+    await removeFromCart(productId);
+
+await fetchCart();
+await refreshCounts();
+
+    toast.success("Item removed from cart");
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message || "Failed to remove item"
+    );
+  }
+};
 
     const handleQuantity = async (productId, quantity) => {
   if (quantity < 1) return;
@@ -40,11 +47,9 @@ function Cart() {
   try {
     await updateCart(productId, quantity);
 
-    // Reload cart after updating quantity
-    fetchCart();
+await fetchCart();
+await refreshCounts();
   } catch (error) {
-    console.error(error);
-
     toast.error(
       error.response?.data?.message || "Failed to update quantity."
     );
