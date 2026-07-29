@@ -40,22 +40,7 @@ if (
 
     doc.pipe(res);
 
-    // Title
-doc
-  .fontSize(24)
-  .fillColor("#0d6efd")
-  .text("ShopSphere", {
-    align: "center",
-  });
 
-doc
-  .fontSize(18)
-  .fillColor("black")
-  .text("Invoice", {
-    align: "center",
-  });
-
-doc.moveDown();
 
 // ================= HEADER =================
 
@@ -131,85 +116,125 @@ if (order.shippingAddress?.phone) {
   doc.text(order.shippingAddress.phone, 320, 196);
 }
 
-// ================= SHIPPING =================
+// ================= SHIPPING ADDRESS =================
+
+const address = order.shippingAddress || {};
 
 doc
-  .roundedRect(50, 260, 500, 120, 5)
+  .roundedRect(50, 260, 500, 110, 5)
   .stroke("#d1d5db");
 
 doc
   .fontSize(14)
   .font("Helvetica-Bold")
+  .fillColor("black")
   .text("SHIPPING ADDRESS", 60, 275);
 
-doc
-  .fontSize(11)
-  .font("Helvetica")
-  .text(order.shippingAddress?.fullName || "", 60, 300)
-  .text(order.shippingAddress?.phone || "", 60, 318)
-  .text(order.shippingAddress?.house || "", 60, 336)
-  .text(order.shippingAddress?.area || "", 60, 354)
-  .text(
-    `${order.shippingAddress?.city || ""}, ${order.shippingAddress?.state || ""}`,
+let shippingY = 300;
+
+doc.font("Helvetica").fontSize(11);
+
+if (address.fullName) {
+  doc.text(address.fullName, 60, shippingY);
+  shippingY += 16;
+}
+
+if (address.phone) {
+  doc.text(address.phone, 60, shippingY);
+  shippingY += 16;
+}
+
+if (address.house) {
+  doc.text(address.house, 60, shippingY);
+  shippingY += 16;
+}
+
+if (address.area) {
+  doc.text(address.area, 60, shippingY);
+  shippingY += 16;
+}
+
+if (address.city || address.state) {
+  doc.text(
+    `${address.city || ""}, ${address.state || ""}`,
     60,
-    372
-  )
-  .text(order.shippingAddress?.pincode || "", 60, 390);
+    shippingY
+  );
+  shippingY += 16;
+}
 
- // ================= PRODUCTS TABLE =================
+if (address.pincode) {
+  doc.text(address.pincode, 60, shippingY);
+}
 
-let tableTop = 430;
+// ================= PRODUCTS =================
 
-// Header Background
+const tableTop = 400;
+const rowHeight = 30;
+
+// Table Title
 doc
-  .rect(50, tableTop, 500, 25)
+  .fontSize(14)
+  .font("Helvetica-Bold")
+  .fillColor("black")
+  .text("PRODUCT DETAILS", 50, tableTop - 25);
+
+// Header
+doc
+  .rect(50, tableTop, 500, rowHeight)
   .fill("#2563eb");
 
-doc
-  .fillColor("white")
-  .font("Helvetica-Bold")
-  .fontSize(11);
+doc.fillColor("white").fontSize(11).font("Helvetica-Bold");
 
-doc.text("Product", 60, tableTop + 7);
-doc.text("Qty", 320, tableTop + 7);
-doc.text("Price", 390, tableTop + 7);
-doc.text("Total", 480, tableTop + 7);
+doc.text("Product", 60, tableTop + 9);
+doc.text("Qty", 300, tableTop + 9);
+doc.text("Price", 370, tableTop + 9);
+doc.text("Total", 465, tableTop + 9);
 
-doc.fillColor("black");
-
-let y = tableTop + 30;
+let currentY = tableTop + rowHeight;
 
 order.orderItems.forEach((item) => {
 
   const total = item.price * item.quantity;
 
+  // Row Border
   doc
+    .rect(50, currentY, 500, rowHeight)
+    .stroke("#dcdcdc");
+
+  doc
+    .fillColor("black")
     .font("Helvetica")
     .fontSize(11);
 
-  doc.text(item.product?.name || item.name, 60, y);
+  doc.text(
+    item.product?.name || item.name,
+    60,
+    currentY + 9,
+    {
+      width: 220,
+    }
+  );
 
-  doc.text(String(item.quantity), 325, y);
+  doc.text(
+    item.quantity.toString(),
+    305,
+    currentY + 9
+  );
 
   doc.text(
     `₹${item.price.toLocaleString("en-IN")}`,
-    390,
-    y
+    365,
+    currentY + 9
   );
 
   doc.text(
     `₹${total.toLocaleString("en-IN")}`,
-    470,
-    y
+    455,
+    currentY + 9
   );
 
-  // Row Line
-  doc
-    .moveTo(50, y + 18)
-    .lineTo(550, y + 18)
-    .stroke("#dddddd");
-
-  y += 28;
+  currentY += rowHeight;
 
 });
 
@@ -218,65 +243,97 @@ order.orderItems.forEach((item) => {
 const shipping = 0;
 const gst = 0;
 const discount = 0;
-const subtotal = order.totalPrice - shipping + discount;
+const subtotal = order.totalPrice;
 
-let summaryY = y + 30;
+const summaryX = 330;
+const summaryWidth = 220;
 
-// Summary Box
+let summaryY = currentY + 25;
+
+// Box
 doc
-  .roundedRect(330, summaryY, 220, 120, 5)
-  .stroke("#d1d5db");
+  .roundedRect(summaryX, summaryY, summaryWidth, 120, 5)
+  .stroke("#cccccc");
 
 doc
   .font("Helvetica")
   .fontSize(11)
   .fillColor("black");
 
-doc.text("Subtotal", 345, summaryY + 15);
+// Subtotal
+doc.text("Subtotal", summaryX + 15, summaryY + 15);
+
 doc.text(
   `₹${subtotal.toLocaleString("en-IN")}`,
-  470,
+  summaryX + 110,
   summaryY + 15,
-  { width: 60, align: "right" }
+  {
+    width: 90,
+    align: "right",
+  }
 );
 
-doc.text("Shipping", 345, summaryY + 38);
-doc.text("FREE", 470, summaryY + 38, {
-  width: 60,
-  align: "right",
-});
+// Shipping
+doc.text("Shipping", summaryX + 15, summaryY + 40);
 
-doc.text("GST", 345, summaryY + 61);
-doc.text(`₹${gst}`, 470, summaryY + 61, {
-  width: 60,
-  align: "right",
-});
+doc.text(
+  "FREE",
+  summaryX + 110,
+  summaryY + 40,
+  {
+    width: 90,
+    align: "right",
+  }
+);
 
-doc.text("Discount", 345, summaryY + 84);
-doc.text(`₹${discount}`, 470, summaryY + 84, {
-  width: 60,
-  align: "right",
-});
+// GST
+doc.text("GST", summaryX + 15, summaryY + 65);
 
-// ================= GRAND TOTAL =================
+doc.text(
+  `₹${gst}`,
+  summaryX + 110,
+  summaryY + 65,
+  {
+    width: 90,
+    align: "right",
+  }
+);
 
+// Discount
+doc.text("Discount", summaryX + 15, summaryY + 90);
+
+doc.text(
+  `₹${discount}`,
+  summaryX + 110,
+  summaryY + 90,
+  {
+    width: 90,
+    align: "right",
+  }
+);
+
+// Grand Total
 summaryY += 140;
 
 doc
-  .roundedRect(330, summaryY, 220, 42, 5)
+  .rect(summaryX, summaryY, summaryWidth, 38)
   .fill("#2563eb");
 
 doc
   .fillColor("white")
   .font("Helvetica-Bold")
-  .fontSize(15);
+  .fontSize(14);
 
-doc.text("Grand Total", 345, summaryY + 14);
+doc.text(
+  "Grand Total",
+  summaryX + 15,
+  summaryY + 12
+);
 
 doc.text(
   `₹${order.totalPrice.toLocaleString("en-IN")}`,
-  430,
-  summaryY + 14,
+  summaryX + 95,
+  summaryY + 12,
   {
     width: 100,
     align: "right",
@@ -285,38 +342,49 @@ doc.text(
 
 // ================= FOOTER =================
 
-summaryY += 70;
+const footerY = summaryY + 70;
 
 doc
-  .fillColor("#666666")
+  .moveTo(50, footerY - 20)
+  .lineTo(550, footerY - 20)
+  .stroke("#cccccc");
+
+doc
+  .fillColor("#555555")
   .font("Helvetica")
-  .fontSize(10);
+  .fontSize(11);
+
+doc.text(
+  `Payment Method : ${order.paymentMethod}`,
+  50,
+  footerY
+);
+
+doc.text(
+  `Order Status : ${order.orderStatus}`,
+  50,
+  footerY + 18
+);
 
 doc.text(
   "Thank you for shopping with ShopSphere!",
   50,
-  summaryY,
+  footerY + 50,
   {
     align: "center",
     width: 500,
   }
 );
 
-doc.moveDown(0.5);
+doc.fontSize(9);
 
 doc.text(
   "This is a computer generated invoice. No signature required.",
+  50,
+  footerY + 68,
   {
     align: "center",
-  }
-);
-
-doc.moveDown(0.5);
-
-doc.text(
-  "support@shopsphere.com | https://shopsphere-vlon.vercel.app",
-  {
-    align: "center",
+    width: 500,
   }
 );
 
