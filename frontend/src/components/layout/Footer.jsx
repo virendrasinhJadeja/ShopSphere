@@ -90,12 +90,12 @@ function Footer() {
 
             <p>
               <FaPhone className="me-2 text-warning" />
-              +91 9876543210
+              +91 8460233348
             </p>
 
             <p>
               <FaMapMarkerAlt className="me-2 text-warning" />
-              Ahmedabad, Gujarat
+              Jamnagar, Gujarat
             </p>
           </div>
 
