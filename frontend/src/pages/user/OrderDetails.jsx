@@ -22,31 +22,19 @@ function OrderDetails() {
 
   const downloadInvoice = async () => {
   try {
-    const token = localStorage.getItem("token");
+    const response = await api.get(`/orders/${id}/invoice`, {
+      responseType: "blob",
+    });
 
-    const response = await fetch(
-      `http://localhost:5000/api/orders/${id}/invoice`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const url = window.URL.createObjectURL(response.data);
 
-    if (!response.ok) {
-      throw new Error("Failed to download invoice");
-    }
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Invoice-${order._id}.pdf`;
 
-    const blob = await response.blob();
-
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Invoice-${order._id}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 
     window.URL.revokeObjectURL(url);
   } catch (error) {
@@ -63,35 +51,140 @@ function OrderDetails() {
     );
   }
 
-  return (
-    <div className="container mt-4">
+ return (
+  <div className="container py-5">
 
-      <h2>Order Details</h2>
+    <div className="card shadow-lg border-0">
 
-      <div className="card p-4">
+      <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
 
-        <h5>Order ID</h5>
-        <p>{order._id}</p>
+        <div>
+          <h3 className="mb-0">🛍️ ShopSphere</h3>
+          <small>Order Details</small>
+        </div>
 
-        <h5>Status</h5>
-        <p>{order.orderStatus}</p>
+        <button
+          className="btn btn-warning fw-bold"
+          onClick={downloadInvoice}
+        >
+          📄 Download Invoice
+        </button>
 
-        <h5>Total</h5>
-        <p>₹{order.totalPrice}</p>
+      </div>
 
-        <div className="mt-4">
-  <button
-    className="btn btn-success"
-    onClick={downloadInvoice}
-  >
-    📄 Download Invoice
-  </button>
-</div>
+      <div className="card-body">
+
+        <div className="row mb-4">
+
+          <div className="col-md-6">
+            <h5>Order Information</h5>
+
+            <p><strong>Order ID:</strong> {order._id}</p>
+
+            <p>
+              <strong>Status:</strong>
+
+              <span className={`badge ms-2 ${
+                order.orderStatus === "Delivered"
+                  ? "bg-success"
+                  : order.orderStatus === "Cancelled"
+                  ? "bg-danger"
+                  : "bg-warning text-dark"
+              }`}>
+                {order.orderStatus}
+              </span>
+
+            </p>
+
+            <p>
+              <strong>Payment:</strong> {order.paymentMethod}
+            </p>
+
+            <p>
+              <strong>Date:</strong>{" "}
+              {new Date(order.createdAt).toLocaleDateString()}
+            </p>
+
+          </div>
+
+          <div className="col-md-6">
+            <h5>Shipping Address</h5>
+
+            <p>{order.shippingAddress?.fullName}</p>
+            <p>{order.shippingAddress?.phone}</p>
+            <p>{order.shippingAddress?.address}</p>
+            <p>{order.shippingAddress?.city}</p>
+            <p>{order.shippingAddress?.state}</p>
+            <p>{order.shippingAddress?.postalCode}</p>
+
+          </div>
+
+        </div>
+
+        <h5 className="mb-3">Products</h5>
+
+        <table className="table table-bordered align-middle">
+
+          <thead className="table-dark">
+
+            <tr>
+              <th>Image</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {order.orderItems.map((item) => (
+
+              <tr key={item.product._id}>
+
+                <td width="100">
+                  <img
+                    src={item.product.images[0]}
+                    alt={item.product.name}
+                    style={{
+                      width: 70,
+                      height: 70,
+                      objectFit: "cover",
+                    }}
+                  />
+                </td>
+
+                <td>{item.product.name}</td>
+
+                <td>{item.quantity}</td>
+
+                <td>₹{item.price}</td>
+
+                <td>₹{item.price * item.quantity}</td>
+
+              </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
+
+        <div className="text-end mt-4">
+
+          <h4 className="text-success">
+            Grand Total : ₹{order.totalPrice}
+          </h4>
+
+        </div>
 
       </div>
 
     </div>
-  );
+
+  </div>
+);
 }
 
 export default OrderDetails;

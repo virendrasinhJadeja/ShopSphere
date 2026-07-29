@@ -2,6 +2,8 @@ const PDFDocument = require("pdfkit");
 const Order = require("../models/Order");
 
 const downloadInvoice = async (req, res) => {
+  console.log("NEW INVOICE CONTROLLER RUNNING");
+  
   try {
     const order = await Order.findById(req.params.id)
       .populate("user", "fullName email")
@@ -39,85 +41,234 @@ if (
     doc.pipe(res);
 
     // Title
-    doc
-      .fontSize(24)
-      .fillColor("#0d6efd")
-      .text("ShopSphere", {
-        align: "center",
-      });
+doc
+  .fontSize(24)
+  .fillColor("#0d6efd")
+  .text("ShopSphere", {
+    align: "center",
+  });
 
-    doc
-      .fontSize(18)
-      .fillColor("black")
-      .text("Invoice", {
-        align: "center",
-      });
+doc
+  .fontSize(18)
+  .fillColor("black")
+  .text("Invoice", {
+    align: "center",
+  });
 
-    doc.moveDown();
+doc.moveDown();
 
-    // Order Info
-    doc.fontSize(12);
-    doc.text(`Order ID : ${order._id}`);
-    doc.text(`Customer : ${order.user.fullName}`);
-    doc.text(`Email : ${order.user.email}`);
-    doc.text(`Payment : ${order.paymentMethod}`);
-    doc.text(`Status : ${order.orderStatus}`);
-    doc.text(
-      `Date : ${new Date(order.createdAt).toLocaleDateString()}`
-    );
 
-    doc.moveDown();
+// ================= HEADER =================
 
-    // Shipping Address
-    doc.fontSize(14).text("Shipping Address");
-    doc.fontSize(12);
+doc
+  .rect(0, 0, doc.page.width, 90)
+  .fill("#0d6efd");
 
-    if (order.shippingAddress) {
-      doc.text(order.shippingAddress.fullName || "");
-      doc.text(order.shippingAddress.phone || "");
-      doc.text(order.shippingAddress.house || "");
-      doc.text(order.shippingAddress.area || "");
-      doc.text(
-        `${order.shippingAddress.city}, ${order.shippingAddress.state}`
-      );
-      doc.text(order.shippingAddress.pincode || "");
+doc
+  .fillColor("white")
+  .fontSize(28)
+  .font("Helvetica-Bold")
+  .text("ShopSphere", 50, 25);
+
+doc
+  .fontSize(16)
+  .text("INVOICE", 420, 28);
+
+doc
+  .fontSize(10)
+  .text(`Invoice #: INV-${order._id.toString().slice(-6)}`, 420, 48);
+
+doc
+  .text(
+    `Date: ${new Date(order.createdAt).toLocaleDateString()}`,
+    420,
+    62
+  );
+
+doc.moveDown(5);
+
+doc.fillColor("black");
+
+   // ================= CUSTOMER DETAILS =================
+
+const startY = 120;
+
+doc
+  .font("Helvetica-Bold")
+  .fontSize(13)
+  .text("BILL TO", 50, startY);
+
+doc
+  .font("Helvetica")
+  .fontSize(11)
+  .text(order.user.fullName, 50, startY + 20)
+  .text(order.user.email, 50, startY + 38);
+
+doc
+  .font("Helvetica-Bold")
+  .fontSize(13)
+  .text("SHIPPING ADDRESS", 320, startY);
+
+if (order.shippingAddress) {
+  doc
+    .font("Helvetica")
+    .fontSize(11)
+    .text(order.shippingAddress.fullName || "", 320, startY + 20)
+    .text(order.shippingAddress.phone || "")
+    .text(order.shippingAddress.house || "")
+    .text(order.shippingAddress.area || "")
+    .text(
+      `${order.shippingAddress.city}, ${order.shippingAddress.state}`
+    )
+    .text(order.shippingAddress.pincode || "");
+}
+
+// Divider Line
+doc
+  .moveTo(50, 250)
+  .lineTo(545, 250)
+  .strokeColor("#cccccc")
+  .stroke();
+
+    // ================= PRODUCTS TABLE =================
+
+let tableTop = 270;
+
+// Header Background
+doc
+  .rect(50, tableTop, 495, 25)
+  .fill("#0d6efd");
+
+doc
+  .fillColor("white")
+  .font("Helvetica-Bold")
+  .fontSize(11);
+
+doc.text("Product", 60, tableTop + 8);
+doc.text("Qty", 310, tableTop + 8);
+doc.text("Price", 380, tableTop + 8);
+doc.text("Total", 470, tableTop + 8);
+
+tableTop += 35;
+
+doc.fillColor("black");
+
+order.orderItems.forEach((item) => {
+
+  const total = item.price * item.quantity;
+
+  doc
+    .font("Helvetica")
+    .fontSize(10);
+
+  doc.text(item.product?.name || item.name, 60, tableTop, {
+    width: 220,
+  });
+
+  doc.text(item.quantity.toString(), 320, tableTop);
+
+  doc.text(`₹${item.price}`, 380, tableTop);
+
+  doc.text(`₹${total}`, 470, tableTop);
+
+  // Row Line
+  doc
+    .moveTo(50, tableTop + 18)
+    .lineTo(545, tableTop + 18)
+    .strokeColor("#dddddd")
+    .stroke();
+
+  tableTop += 28;
+
+});
+
+   // ================= SUMMARY =================
+
+tableTop += 20;
+
+const shipping = 0;
+const gst = 0;
+const subtotal = order.totalPrice - shipping;
+
+doc
+  .font("Helvetica")
+  .fontSize(11)
+  .fillColor("black");
+
+doc.text("Subtotal", 360, tableTop);
+doc.text(`₹${subtotal}`, 470, tableTop, {
+  width: 70,
+  align: "right",
+});
+
+tableTop += 20;
+
+doc.text("Shipping", 360, tableTop);
+doc.text("FREE", 470, tableTop, {
+  width: 70,
+  align: "right",
+});
+
+tableTop += 20;
+
+doc.text("GST", 360, tableTop);
+doc.text(`₹${gst}`, 470, tableTop, {
+  width: 70,
+  align: "right",
+});
+
+// Grand Total Box
+tableTop += 35;
+
+doc
+  .roundedRect(340, tableTop, 205, 35, 5)
+  .fill("#0d6efd");
+
+doc
+  .fillColor("white")
+  .font("Helvetica-Bold")
+  .fontSize(14);
+
+doc.text("Grand Total", 350, tableTop + 10);
+
+doc.text(`₹${order.totalPrice}`, 455, tableTop + 10, {
+  width: 80,
+  align: "right",
+});
+
+// ================= FOOTER =================
+
+tableTop += 80;
+
+doc
+  .fillColor("#666666")
+  .font("Helvetica")
+  .fontSize(11)
+  .text(
+    "Thank you for shopping with ShopSphere!",
+    50,
+    tableTop,
+    {
+      align: "center",
+      width: 500,
     }
+  );
 
-    doc.moveDown();
+doc.moveDown(0.5);
 
-    // Products
-    doc.fontSize(14).text("Products");
-    doc.moveDown(0.5);
+doc.text(
+  "For support: support@shopsphere.com",
+  {
+    align: "center",
+  }
+);
 
-    order.orderItems.forEach((item) => {
-      doc.text(
-        `${item.name}   | Qty: ${item.quantity} | ₹${item.price}`
-      );
-    });
-
-    doc.moveDown();
-
-    doc
-      .fontSize(16)
-      .fillColor("green")
-      .text(
-        `Grand Total : ₹${order.totalPrice}`,
-        {
-          align: "right",
-        }
-      );
-
-    doc.moveDown(2);
-
-    doc
-      .fontSize(12)
-      .fillColor("gray")
-      .text(
-        "Thank you for shopping with ShopSphere!",
-        {
-          align: "center",
-        }
-      );
+doc.text(
+  "https://shopsphere-live.vercel.app/",
+  {
+    align: "center",
+  }
+);
 
     doc.end();
 
