@@ -5,6 +5,7 @@ const {
   registerUser,
   loginUser,
   getUserProfile,
+  updateUserProfile,
   getAllUsers,
   deleteUser,
   adminDashboard,
@@ -18,7 +19,7 @@ router.post("/login", loginUser);
 
 // Protected Route
 router.get("/profile", protect, getUserProfile);
-
+router.put("/profile", protect, updateUserProfile);
 router.get("/users", protect, admin, getAllUsers);
 router.delete("/users/:id", protect, admin, deleteUser);
 
